@@ -2,31 +2,31 @@ Number of variables: 1
 Variables:  x
 Rank: 1
 -------------------------
-Solution 1 (path number 0)
-Estimated condition number: 4.716345800192673e+00
-Function residual: 1.110223024625157e-16
-Latest Newton residual: 1.184583618576774e-16
-T value at final sample point: 1.562500000000000e-03
+Solution 0 (path number 0)
+Estimated condition number: 2.777601060296743e+00
+Function residual: 5.551115123125783e-17
+Latest Newton residual: 1.017357480874738e-16
+T value at final sample point: 3.906250000000000e-04
 Maximum precision utilized: 52
 T value of first precision increase: 0.000000000000000e+00
-Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  1.570092458683775e-16
-Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  2.943064163786719e-16
+Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  8.373920296122101e-14
+Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  2.077197754273679e-13
 Cycle number: 1
-1.000000000000000e+00 0.000000000000000e+00
+1.387778780781446e-17 -1.000000000000000e+00
 Paths with the same endpoint, to the prescribed tolerance:  
 Multiplicity: 1
 -------------------------
-Solution 0 (path number 1)
-Estimated condition number: 3.282560293896601e+00
+Solution 1 (path number 1)
+Estimated condition number: 3.337609113855569e+00
 Function residual: 0.000000000000000e+00
-Latest Newton residual: 0.000000000000000e+00
-T value at final sample point: 1.562500000000000e-03
+Latest Newton residual: 7.383284061245577e-17
+T value at final sample point: 3.906250000000000e-04
 Maximum precision utilized: 52
 T value of first precision increase: 0.000000000000000e+00
-Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  0.000000000000000e+00
-Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  2.248838553925289e-16
+Accuracy estimate, internal coordinates (difference of last two endpoint estimates):  8.550809515618228e-14
+Accuracy estimate, user's coordinates (after dehomogenization, if applicable):  1.932343820620979e-13
 Cycle number: 1
--1.000000000000000e+00 0.000000000000000e+00
+-5.551115123125783e-17 1.000000000000000e+00
 Paths with the same endpoint, to the prescribed tolerance:  
 Multiplicity: 1
 -------------------------
@@ -37,9 +37,9 @@ At tol=1.000000000000e-10, there appear to be 2 solutions.
 
 CONFIG
 
-CoeffBound: 2.146832000000e+00;
+CoeffBound: 1.762862000000e+00;
 DegreeBound: 2.000000000000e+00;
-RandomSeed: 1660035442;
+RandomSeed: 1660038135;
 
 END;
 
@@ -47,7 +47,7 @@ INPUT
 
 function f;
 variable_group x;
-f=x^2-1;
+f=x^2+1;
 
 END;
 
