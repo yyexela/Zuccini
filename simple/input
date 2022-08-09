@@ -1,0 +1,4 @@
+function f;
+variable_group x;
+f = x^2 - 1;
+END;
