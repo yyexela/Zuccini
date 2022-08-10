@@ -34,13 +34,6 @@ class FunctionGenerator(object):
         if n < 1:
             raise Exception("n must be a non-zero integer, it is " + str(n))
 
-        # Hard code first two functions
-        if n == 1:
-             return "(x1^2-1)/(3*y1)+y1"
-
-        if n == 2:
-            return "(x2^2-1)/(3*y2)+y1"
-
         # For functions 3+, read the next line from self.family_1_file_name generated
         #   from the Mathematica file `equations.nb`
         line = self._function_file.readline().strip().replace("**","^")
@@ -57,8 +50,8 @@ class FunctionGenerator(object):
 def add_new_lines(lines):
     return list(map(lambda l: l + "\n", lines))
 
-# Adds subfunctions as parameters to the lines as well as Bertini `function`
-def add_subfunctions(lines, f_gen, n):
+# Adds functions as parameters to the lines as well as Bertini `function`
+def add_functions(lines, f_gen, n):
     # Add function_line
     function_line = "function "
     for i in range(1, n):
@@ -68,25 +61,16 @@ def add_subfunctions(lines, f_gen, n):
     function_line = function_line + ";"
     lines.append(function_line)
 
-    # Add subfunctions themselves
-    for i in range(1, n + 1):
-        lines.append("r" + str(i) + " = " + f_gen.get_next_function() + ";")
+    # Add functions themselves
+    for i in range(1, n+1):
+        lines.append("f" + str(i) + " = " + f_gen.get_next_function() + ";")
     return lines
-
-# Adds functions we're solving
-def add_functions(lines, mode, n):
-    if mode == 1:
-        for i in range(1,n):
-            lines.append("f" + str(i) + " = r" + str(i) + " - r" + str(i+1) + ";")
-        return lines
-    else:
-        raise Exception("Mode {0:d} unrecognized".format(mode))
 
 #####################################################
 # Parameters # Parameters # Parameters # Parameters #
 #####################################################
 
-f_num = 5;
+f_num = 6;
 mode = 1;   # Modes:
             # 1: fn = rn - r(n+1) = 0
 
@@ -96,7 +80,7 @@ mode = 1;   # Modes:
 
 # Create lines we want to write, add newlines later
 # Declare config and other static lines that won't necessarily be changing later
-lines = ["CONFIG;", \
+lines = ["CONFIG", \
          "TRACKTYPE: 1;", \
          "END;", \
          "", \
@@ -106,9 +90,7 @@ lines = ["CONFIG;", \
 # Create class which generates function
 f_gen = FunctionGenerator()
 
-lines = add_subfunctions(lines, f_gen, f_num)
-lines.append("")
-lines = add_functions(lines, mode, f_num)
+lines = add_functions(lines, f_gen, f_num)
 lines.append("")
 lines.append("END;")
 lines = add_new_lines(lines)
