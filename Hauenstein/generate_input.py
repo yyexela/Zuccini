@@ -10,12 +10,26 @@ import math
 # Functions # Functions # Functions # Functions #
 #################################################
 
+# Gets the functinos needed for the bertini input
 class FunctionGenerator(object):
+    family_1_file_name = "family1.txt" # Path to the file containing family 1
+                                       # functions in order starting with n=1
+                                       # on line 0
     _function_number = 1 # Functions are defined for natural numbers {1,2,3,...}
+    _function_file = None
 
-    @classmethod
+    # Opens the file with the functions
+    def __init__(self):
+        self._function_file = open(self.family_1_file_name, "r")
+        if self._function_file == None:
+            raise Exception("File {0:s} not found".format(self.family_1_file_name))
+        
+    def __del__(self):
+        if self._function_file != None:
+            self._function_file.close()
+
     # Creates the nth funtion from Sam's functions
-    def get_function(cls, n: int) -> str:
+    def get_function(self, n: int) -> str:
         # Error checking
         if n < 1:
             raise Exception("n must be a non-zero integer, it is " + str(n))
@@ -27,82 +41,54 @@ class FunctionGenerator(object):
         if n == 2:
             return "(x2^2-1)/(3*y2)+y1"
 
-        # For functions 3+, subtract 2 to use the expansion (ex. 3 -> 1)
-        n = n - 2
-        func = ""
-        # Numerator
-        func = func + "("
-        for i in range(1,n+1):
-            func = func + str(cls.get_di(i, n)) + "*(x1^" + str(2*i+1) + "*y1^"+\
-                str(2*(n-1)+1) + " + x2^" + str(2*i+1) + "*y2^" +\
-                str(2*(n-i)+1) + ")"
-        
-        func = func + ")/(-" + str(cls.get_ci(i,n))
+        # For functions 3+, read the next line from self.family_1_file_name generated
+        #   from the Mathematica file `equations.nb`
+        line = self._function_file.readline().strip().replace("**","^")
+        if line == "":
+            raise Exception("File family.txt contains no more functions, n is {}".format(n))
+        return line
 
-        # Denominator
-        for i in range(1,n+1):
-            func = func + str(cls.get_ci(i, n)) + " + " +\
-                str(cls.get_ci(i, n)) + "*(x1^" + str(2*i+1) + "*y1^"+\
-                str(2*(n-i))+" + x2^" + str(2*i+1) + "*y2^" + str(2*(n-i)) + ")"
-
-        func = func + ")"
-
-        return func 
-
-    @classmethod
-    def get_next_function(cls) -> str:
-        ret_str = cls.get_function(cls._function_number)
-        cls._function_number = cls._function_number + 1
+    def get_next_function(self) -> str:
+        ret_str = self.get_function(self._function_number)
+        self._function_number = self._function_number + 1
         return ret_str
-
-    # TODO: optimize this so we don't re-calculate values every time
-    @classmethod
-    def get_ci(cls, i: int, n: int):
-        # Error checking
-        if i < 0:
-            raise Exception("i must be greater than 0, it is " + str(i))
-
-        # Logic
-        if i == n:
-            return 3/((2*n+1)*(2*n-1))
-        else:
-            return (3*i/(n-i)*(2*n)*(2*n-1))*(math.comb(2*n,2*i+1))
-    
-    # TODO: optimize this so we don't re-calculate values every time
-    @classmethod
-    def get_di(cls, i: int, n: int):
-        # Error checking
-        if i < 0:
-            raise Exception("i must be greater than 0, it is " + str(i))
-
-        # Logic
-        return (2-(4*(i-1)/(3*(2*i-2*n-1))))*cls.get_ci(i, n)
-
 
 # Adds a newline to every line in the list lines
 def add_new_lines(lines):
     return list(map(lambda l: l + "\n", lines))
 
-# Adds functions as parameters to the lines as well as Bertini `function`
-def add_functions(lines, f_gen, n):
+# Adds subfunctions as parameters to the lines as well as Bertini `function`
+def add_subfunctions(lines, f_gen, n):
     # Add function_line
     function_line = "function "
-    for i in range(0, n):
+    for i in range(1, n):
         function_line = function_line + " f" + str(i)
+        if i < n-1:
+            function_line = function_line + ","
     function_line = function_line + ";"
     lines.append(function_line)
 
-    # Add functions themselves
+    # Add subfunctions themselves
     for i in range(1, n + 1):
         lines.append("r" + str(i) + " = " + f_gen.get_next_function() + ";")
     return lines
 
+# Adds functions we're solving
+def add_functions(lines, mode, n):
+    if mode == 1:
+        for i in range(1,n):
+            lines.append("f" + str(i) + " = r" + str(i) + " - r" + str(i+1) + ";")
+        return lines
+    else:
+        raise Exception("Mode {0:d} unrecognized".format(mode))
 
 #####################################################
 # Parameters # Parameters # Parameters # Parameters #
 #####################################################
 
 f_num = 5;
+mode = 1;   # Modes:
+            # 1: fn = rn - r(n+1) = 0
 
 ##################################################
 # Main # Main # Main # Main # Main # Main # Main #
@@ -120,7 +106,11 @@ lines = ["CONFIG;", \
 # Create class which generates function
 f_gen = FunctionGenerator()
 
-lines = add_functions(lines, f_gen, f_num)
+lines = add_subfunctions(lines, f_gen, f_num)
+lines.append("")
+lines = add_functions(lines, mode, f_num)
+lines.append("")
+lines.append("END;")
 lines = add_new_lines(lines)
 
 f = open("input", "w")

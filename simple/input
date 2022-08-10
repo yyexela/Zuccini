@@ -1,4 +1,4 @@
 function f;
 variable_group x;
-f = x^2 + 1;
+f = 1.+x^2;
 END;
