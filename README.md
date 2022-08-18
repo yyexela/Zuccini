@@ -10,3 +10,7 @@
 ## `Hauenstein/generate_input.py`
  - Generates an `input` file for Bertini using the file generated from `Equations.nb`. Note that the equations generated in `Equations.nb` have `**` instead of `^` for exponents, but this Python file handles the replacement while generating the `input` file.
  - To run, run `python generate_input.py` when the file `family1.txt` is in the current directory. This will output `input` in the current directory.
+
+## Other
+
+Everything else is an artifact of running Bertini.
