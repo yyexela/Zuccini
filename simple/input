@@ -1,4 +1,0 @@
-function f;
-variable_group x;
-f = 1.+x^2;
-END;
